@@ -1,0 +1,75 @@
+[project]
+name = "gemmeh"
+version = "0.1.0"
+description = "Training a small LLM from scratch based partly on Gemma3 architecture"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "datasets>=4.6.1",
+    "huggingface-hub>=1.6.0",
+    "tqdm>=4.67.3",
+    "transformers>=5.0.0",
+    "torch>=2.10.0",
+]
+ 
+[project.optional-dependencies]
+tokenizer = [
+    "sentencepiece>=0.2.1",
+    "numpy>=2.2.6",
+    "wandb>=0.25.0",
+]
+train = [
+    "sentencepiece>=0.2.1",
+    "numpy>=2.2.6",
+    "wandb>=0.25.0",
+]
+
+eval = [
+    "sentencepiece>=0.2.1",
+    "torch>=2.10.0",
+    "fastapi>=0.135.1",
+    "uvicorn[standard]>=0.41.0",
+    "pydantic>=2.12.5",
+    "lm-eval[api]>=0.4.11",
+    "requests>=2.32.5",
+    "matplotlib"
+]
+finetune = [
+    "sentencepiece>=0.2.1",
+    "numpy>=2.2.6",
+    "wandb>=0.25.0",
+]
+dev = [
+    "mypy>=1.10",
+    "ruff>=0.4",
+]
+all = [
+    "gemmeh[tokenizer,train,eval,finetune,dev]",
+]
+ 
+# ── Build ──────────────────────────────────────────────────────────────────────
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+ 
+[tool.hatch.build.targets.wheel]
+packages = ["src/gemmeh"]
+
+# ── Ruff ──────────────────────────────────────────────────────────────────────
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ── Mypy ──────────────────────────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.10"
+check_untyped_defs = true
+disallow_untyped_defs = false
+warn_return_any = true
+warn_unused_ignores = true
+no_implicit_optional = true
+ignore_missing_imports = true

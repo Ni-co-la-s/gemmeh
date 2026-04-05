@@ -1,0 +1,10 @@
+__pycache__
+/data/
+/checkpoints/
+/models/
+**venv**
+.mypy_cache
+.ruff_cache
+wandb
+tmp_results
+test*
