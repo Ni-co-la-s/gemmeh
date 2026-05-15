@@ -337,9 +337,27 @@ Adapter-only checkpoints (~62 MB) are saved separately from the base model.
 
 ### Step 7: Export and serve
 
-Export a checkpoint to HuggingFace-compatible format (safetensors + config + tokenizer):
+If you want to use the instruction-tuned (it) model, first merge the LoRA adapters into the base checkpoint:
 
 Example:
+```bash
+uv run -m gemmeh.convert.merge_lora \
+  --base_checkpoint checkpoints/pretrain-1B-20B/step_305176_tokens_20000014336.pt \
+  --lora_checkpoint checkpoints/finetune-1B/best.pt \
+  --output_path checkpoints/finetune-1B/merged.pt \
+  --rank 16 \
+  --alpha 32 \
+  --targets q k v o gate up down \
+  --device cpu
+```
+
+(CPU is slower, but the process can be expensive on the VRAM)
+
+Then export a checkpoint to HuggingFace-compatible format (safetensors + config + tokenizer):
+
+Example:
+
+For base model
 ```bash
 uv run -m gemmeh.convert.export_checkpoint \
   checkpoints/pretrain-1B-20B/step_305176_tokens_20000014336.pt \
@@ -347,7 +365,15 @@ uv run -m gemmeh.convert.export_checkpoint \
   gemmeh
 ```
 
-Output: `models/gemmeh/` containing `model.safetensors`, `config.json`, and `tokenizer.model`.
+For it model
+```bash
+uv run -m gemmeh.convert.export_checkpoint \
+  checkpoints/finetune-1B/merged.pt \
+  data/tokenizers/run_32k_1B/sentencepiece.model \
+  gemmeh-it
+```
+
+Output: `models/gemmeh-it/` or `models/gemmeh/` containing `model.safetensors`, `config.json`, and `tokenizer.model`.
 
 **Serve with vLLM** (recommended):
 
