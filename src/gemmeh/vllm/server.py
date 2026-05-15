@@ -12,7 +12,7 @@ import asyncio
 
 from vllm.entrypoints.openai.api_server import run_server, make_arg_parser
 from vllm.utils.argparse_utils import FlexibleArgumentParser
-import gemmeh.vlm.model # noqa: F401
+import gemmeh.vlm.model  # noqa: F401
 
 
 def main():
