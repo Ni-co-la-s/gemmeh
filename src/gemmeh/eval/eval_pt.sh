@@ -2,7 +2,7 @@
 #
 # eval.sh — Start the server, run lm_eval suite, then shut it down.
 # Usage 
-#   src/gemmeh/pretrain/eval.sh checkpoints/path/to/best.pt  data/tokenizers/path/to/sentencepiece.model
+#   src/gemmeh/eval/eval_pt.sh checkpoints/path/to/best.pt  data/tokenizers/path/to/sentencepiece.model
 
 set -euo pipefail
 
