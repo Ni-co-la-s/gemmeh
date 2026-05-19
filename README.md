@@ -71,7 +71,7 @@ Document boundaries are preserved: at tokenization time, documents are separated
 
 ### Finetuning corpus: OpenHermes
 
-LoRA finetuning uses the [OpenHermes](https://huggingface.co/datasets/teknium/openhermes) dataset, which was published end of 2023 to not go pass the wanted knowledge cutoff.
+LoRA finetuning uses the [OpenHermes](https://huggingface.co/datasets/teknium/openhermes) dataset, which was published end of 2023 to not go past the wanted knowledge cutoff.
 It contains 242k pairs of chat input/output, mostly sampled from GPT-4 (single turn conversation).
 
 
@@ -156,21 +156,28 @@ The three 2B-token runs provide a direct scaling comparison: at fixed compute bu
   <p><em>Data scaling at fixed 1.1B parameters. Left: learning rate schedule, the 20B run (green) uses a 10× longer warmup and slower decay. Center: training loss. Right: validation loss. The 20B run continues improving well past the 2B run (red), reaching a final val loss of 2.39 vs 2.72.</em></p>
 </div>
 
+### Model
+
+GGUF weights are available on HuggingFace, in three quantization levels (BF16, Q4_K_M, Q2_K) at [ni-co-la-s/gemmeh-GGUF](https://huggingface.co/ni-co-la-s/gemmeh-GGUF).
+These can be used with the [the llama.cpp fork](https://github.com/Ni-co-la-s/llama.cpp-gemmeh) (see section "Serving and Deployment").
+
 ### Evaluation (lm-eval)
 
-The full benchmark suite was run on the 1B model trained on 20B tokens using [lm-eval](https://github.com/EleutherAI/lm-evaluation-harness). Results are compared below against published numbers from comparable models.
+The full benchmark suite was ran on the 1B base model trained on 20B tokens using [lm-eval](https://github.com/EleutherAI/lm-evaluation-harness) through the BF16 GGUF served via llama.cpp, using [eval_gguf.sh](src/gemmeh/eval/eval_gguf.sh).
+ Results are compared below against published numbers from other base models.
 
-| Benchmark | Metric | Gemmeh 1B | Gemma 3 PT 1B | SmolLM2-1.7B | Llama-1B | Qwen2.5-1.5B | SmolLM1-1.7B |
+| Benchmark | Metric | Gemmeh 1B | Gemma 3 1B PT | SmolLM2-1.7B | Llama-1B | Qwen2.5-1.5B | SmolLM1-1.7B |
 |---|---|---:|---:|---:|---:|---:|---:|
-| HellaSwag | 10-shot | 53.3 | 62.3 | **68.7** | 61.2 | 66.4 | 62.9 |
-| PIQA | 0-shot | 72.0 | 73.8 | **77.6** | 74.8 | 76.1 | 76.0 |
-| ARC-Challenge | 25-shot | **38.7** | 38.4 | — | — | — | — |
-| ARC-Easy | 0-shot | 53.3 | **73.0** | — | — | — | — |
-| WinoGrande | 5-shot | 53.9 | 58.2 | **59.4** | 57.8 | 59.3 | 54.7 |
+| PIQA | 0-shot | 70.2 | 73.8 | **77.6** | 74.8 | 76.1 | 76.0 |
+| ARC-Challenge | 25-shot | 38.4 | **38.4** | — | — | — | — |
+| ARC-Easy | 0-shot | 57.3 | **73.0** | — | — | — | — |
+| WinoGrande | 5-shot | 52.2 | 58.2 | **59.4** | 57.8 | 59.3 | 54.7 |
 
-Results are sourced from [SmolLM2](https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B) and [Gemma3](https://huggingface.co/google/gemma-3-1b-it) technical reports.
+Results are sourced from [SmolLM2](https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B) and [Gemma3](https://huggingface.co/google/gemma-3-1b-pt) technical reports.
 
 Gemmeh scores are lower across the board, which is expected: the model was trained on 20B tokens vs hundreds of billions to trillions for the reference models, with a 32k english-only vocabulary vs 128k–262k, and without distillation.
+
+> **Note (2026-05-19):** Earlier versions of this table reported values obtained with lm-eval on the .pt file, this new table uses the gguf files. PIQA, and the ARC are based on acc_norm (previously acc) to match gemma3. ARC-e was updated due to a typo. HellaSwag was dropped from the evaluation suite for now because running it through the GGUF pipeline takes too long. Besides that, consistent results to the GGUF numbers were obtained when evaluating the raw `.pt` checkpoint with [eval_pt.sh](src/gemmeh/eval/eval_pt.sh).
 
 ---
 
@@ -215,6 +222,25 @@ Only one run was done on the biggest model (1B trained on 20B tokens)
   <p><em>LoRA finetuning on the 1B-20B base model. Left: learning rate schedule (cosine decay). Center: training loss, converging to ~0.98. Right: validation loss.</em></p>
 </div>
 
+### Model
+
+GGUF weights are available on HuggingFace, in three quantization levels (BF16, Q4_K_M, Q2_K) at [ni-co-la-s/gemmeh-it-GGUF](https://huggingface.co/ni-co-la-s/gemmeh-it-GGUF).
+These can be used with the [llama.cpp fork](https://github.com/Ni-co-la-s/llama.cpp-gemmeh) (see section "Serving and Deployment").
+
+
+### Evaluation (lm-eval)
+
+The finetuned model was evaluated through the same GGUF pipeline as the base model. Gemma 3 1B it is the natural baseline and I included below the numbers obtained by running [unsloth/gemma-3-1b-it-GGUF at Q8_0](https://huggingface.co/unsloth/gemma-3-1b-it-GGUF) through the [same evaluation script](src/gemmeh/eval/eval_gguf.sh).
+
+
+| Benchmark | Metric | Gemmeh 1B (base) | Gemmeh-IT 1B | Gemma 3 1B IT (local) |
+|---|---|---:|---:|---:|
+| PIQA | 0-shot | 70.2 | 71.4 | **72.8** |
+| ARC-Challenge | 25-shot | 38.4 | **40.4** | 40.3 |
+| ARC-Easy | 0-shot | 57.3 | 57.6 | **63.4** |
+| WinoGrande | 5-shot | 52.2 | 54.0 | **55.1** |
+| TruthfulQA | mc2, 0-shot | 37.8 | **44.8** | 38.9 |
+
 ## RYS layer-duplication experiment
 
 [RYS](https://dnhkng.github.io/posts/rys/) (Repeat Yourself) tests whether duplicating a contiguous block of layers `[i, j]` improves performance without additional training.
@@ -240,7 +266,7 @@ This was already observed by the author on smaller models:
 The model was integrated into two inference frameworks.
 
 - vLLM: by defining the model architecture with vLLM layers and writing a custom file to serve the model as OpenAI-compatible API endpoint. This can be used out of the box
-- llama.cpp: by defining a new architecture (original Gemma3 model could not be used, due to the absence of sliding window attention in our version, as well as the fused QKV). This was done following [this guide](https://github.com/ggml-org/llama.cpp/blob/master/docs/development/HOWTO-add-model.md) Because of this, the model can only be used within this [fork](https://github.com/Ni-co-la-s/llama.cpp-gemmeh), for demonstration purposes.
+- llama.cpp: by defining a new architecture (original Gemma3 model could not be used, due to the absence of sliding window attention in our version, as well as the fused QKV). This was done following [this guide](https://github.com/ggml-org/llama.cpp/blob/master/docs/development/HOWTO-add-model.md) Because of this, the model can only be used within this [fork](https://github.com/Ni-co-la-s/llama.cpp-gemmeh), for demonstration purposes. Some additional patches to llama-server were made so that it can be used with lm-eval for the evaluations.
 
 ---
 
@@ -313,13 +339,22 @@ Training logs to Weights & Biases if provided in config. Checkpoints are saved t
 
 ### Step 5: Evaluate the base model
 
-The evaluation script starts a local completion server, runs the lm-eval benchmark suite against it, logs results to W&B, and shuts down:
+Two evaluation scripts are provided:
+
+- `src/gemmeh/eval/eval_pt.sh` — spins up the Python completions server (Section "Serving") and evaluates a raw `.pt` checkpoint mid-training. Useful before exporting.
+- `src/gemmeh/eval/eval_gguf.sh` — evaluates one or more GGUF files via llama-server. This is what was used to produce the reported numbers.
 
 Example:
 ```bash
-src/gemmeh/pretrain/eval.sh \
+src/gemmeh/eval/eval_pt.sh \
   checkpoints/pretrain-1B-20B/step_305176_tokens_20000014336.pt \
   data/tokenizers/run_32k_1B/sentencepiece.model
+```
+
+```bash
+src/gemmeh/eval/eval_gguf.sh \
+  --llama-cpp /home/at/llama.cpp \
+  --model models/gemmeh/gemmeh.gguf model.gguf # Needs to convert the model to gguf before (see step 7)
 ```
 
 ### Step 6: Finetune with LoRA
@@ -412,7 +447,6 @@ python src/gemmeh/rys/heatmap.py --csv rys_results.csv
 ## Potential next steps
 
 - Add support for multi-GPU training (data parallelization)
-- Evaluate the finetuned model with lm-eval as well
 - Evaluate potential regressions from quantizing with llama.cpp
 - Train the base model further on wikipedia dump from 2023 to see how much better it gets at predictions
 - Finetune on other datasets with multi-turn conversation.
