@@ -1,6 +1,6 @@
 # Gemmeh
 
-A decoder-only transformer language model trained from scratch, inspired by Gemma 3. This project covers the full stack: dataset curation, tokenizer building, pretraining at 3 model scales (185M, 500M and 1B parameters), LoRA finetuning, benchmark evaluation, a reproduction of the [RYS layer-duplication experiment](https://dnhkng.github.io/posts/rys/), and serving through both vLLM and llama.cpp.
+A decoder-only transformer language model trained from scratch, inspired by Gemma 3. This project covers the full stack: dataset curation, tokenizer building, pretraining at 3 model scales (185M, 500M and 1B parameters), LoRA finetuning, benchmark evaluation, a reproduction of the [RYS layer-duplication experiment](https://dnhkng.github.io/posts/rys/), and serving through both vLLM and llama.cpp, with a browser [demo available](https://gemmeh.com/).
 
 The model is trained exclusively on pre-2024 data with an intentional knowledge cutoff, which allows doing experiments around measuring the "surprise", how predictable a post-cutoff event appears from the model's perspective, using the logprobs.
 
@@ -267,6 +267,17 @@ The model was integrated into two inference frameworks.
 
 - vLLM: by defining the model architecture with vLLM layers and writing a custom file to serve the model as OpenAI-compatible API endpoint. This can be used out of the box
 - llama.cpp: by defining a new architecture (original Gemma3 model could not be used, due to the absence of sliding window attention in our version, as well as the fused QKV). This was done following [this guide](https://github.com/ggml-org/llama.cpp/blob/master/docs/development/HOWTO-add-model.md) Because of this, the model can only be used within this [fork](https://github.com/Ni-co-la-s/llama.cpp-gemmeh), for demonstration purposes. Some additional patches to llama-server were made so that it can be used with lm-eval for the evaluations.
+
+### Frontend demo (GCP)
+
+A public frontend demo is deployed on Google Cloud Run:
+
+- https://gemmeh.com/
+
+This app provides a UI for:
+
+- token-level next-token inspection (logprobs + top-k alternatives) for gemmeh, qwen 1.5 0.5B and llama 3.2 1b
+- minimal chat with gemmeh-it supporting streaming responses
 
 ---
 
