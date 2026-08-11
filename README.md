@@ -158,8 +158,9 @@ The three 2B-token runs provide a direct scaling comparison: at fixed compute bu
 
 ### Model
 
-GGUF weights are available on HuggingFace, in three quantization levels (BF16, Q4_K_M, Q2_K) at [ni-co-la-s/gemmeh-GGUF](https://huggingface.co/ni-co-la-s/gemmeh-GGUF).
+GGUF weights for the final 1B model are available on HuggingFace, in three quantization levels (BF16, Q4_K_M, Q2_K) at [ni-co-la-s/gemmeh-GGUF](https://huggingface.co/ni-co-la-s/gemmeh-GGUF).
 These can be used with the [the llama.cpp fork](https://github.com/Ni-co-la-s/llama.cpp-gemmeh) (see section "Serving and Deployment").
+Safetensors are also available at [ni-co-la-s/gemmeh](https://huggingface.co/ni-co-la-s/gemmeh).
 
 ### Evaluation (lm-eval)
 
@@ -226,7 +227,7 @@ Only one run was done on the biggest model (1B trained on 20B tokens)
 
 GGUF weights are available on HuggingFace, in three quantization levels (BF16, Q4_K_M, Q2_K) at [ni-co-la-s/gemmeh-it-GGUF](https://huggingface.co/ni-co-la-s/gemmeh-it-GGUF).
 These can be used with the [llama.cpp fork](https://github.com/Ni-co-la-s/llama.cpp-gemmeh) (see section "Serving and Deployment").
-
+Safetensors are also available at [ni-co-la-s/gemmeh-it](https://huggingface.co/ni-co-la-s/gemmeh-it).
 
 ### Evaluation (lm-eval)
 
