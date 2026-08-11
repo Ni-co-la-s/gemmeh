@@ -34,7 +34,7 @@ from gemmeh.config.model_config import ModelConfig
 from gemmeh.config.train_config import TrainConfig
 
 from gemmeh.model.gemma3 import Gemma3Model
-from gemmeh.pretrain.data import create_dataloader
+from gemmeh.pretrain.data import create_train_dataloader, create_val_dataloader
 from gemmeh.utils.generation import generate_text_samples
 
 # Prompts use to test the model outputs
@@ -145,12 +145,12 @@ def train():
     print(f"Model parameters: {total_params / 1e6:.1f}M")
 
     # Data
-    train_loader = create_dataloader(
+    train_loader = create_train_dataloader(
         cfg.train_bin,
         cfg.seq_len,
         cfg.micro_batch_size,
     )
-    val_loader = create_dataloader(
+    val_loader = create_val_dataloader(
         cfg.val_bin,
         cfg.seq_len,
         cfg.micro_batch_size,
