@@ -54,7 +54,7 @@ DUMP_SCHEDULE: dict[str, DumpGroup] = {
             "CC-MAIN-2023-14",
             "CC-MAIN-2023-06",
         ],
-        "target_tokens": 8_000_0,  # 8B tokens
+        "target_tokens": 8_000_000_000,  # 8B tokens
     },
     "2022": {
         "dumps": [
@@ -65,7 +65,7 @@ DUMP_SCHEDULE: dict[str, DumpGroup] = {
             "CC-MAIN-2022-21",
             "CC-MAIN-2022-05",
         ],
-        "target_tokens": 5_000_0,  # 5B tokens
+        "target_tokens": 5_000_000_000,  # 5B tokens
     },
     "2021": {
         "dumps": [
@@ -79,7 +79,7 @@ DUMP_SCHEDULE: dict[str, DumpGroup] = {
             "CC-MAIN-2021-10",
             "CC-MAIN-2021-04",
         ],
-        "target_tokens": 3_000_0,  # 3B tokens
+        "target_tokens": 3_000_000_000,  # 3B tokens
     },
     "2018-2020": {
         "dumps": [
@@ -90,7 +90,7 @@ DUMP_SCHEDULE: dict[str, DumpGroup] = {
             "CC-MAIN-2018-39",
             "CC-MAIN-2018-17",
         ],
-        "target_tokens": 2_000_0,  # 2B tokens
+        "target_tokens": 2_000_000_000,  # 2B tokens
     },
     "2013-2017": {
         "dumps": [
@@ -103,7 +103,7 @@ DUMP_SCHEDULE: dict[str, DumpGroup] = {
             "CC-MAIN-2014-23",
             "CC-MAIN-2013-48",
         ],
-        "target_tokens": 2_000_0,  # 2B tokens
+        "target_tokens": 2_000_000_000,  # 2B tokens
     },
 }
 
