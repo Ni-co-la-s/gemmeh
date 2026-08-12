@@ -27,7 +27,7 @@ class FinetuneConfig:
     # LoRA
     lora_rank: int = 16
     lora_alpha: float = 32.0  # scale = alpha / rank = 2.0
-    lora_targets: list[str] = dataclasses.field(default_factory=lambda: ["q", "v", "o"])
+    lora_targets: list[str] = dataclasses.field(default_factory=lambda: ["q","k","v","o","gate","up","down"])
     # Dropout on LoRA activations
     lora_dropout: float = 0.05
 
@@ -36,11 +36,11 @@ class FinetuneConfig:
 
     # Optimization
     micro_batch_size: int = 1  # per-step batch size
-    gradient_accumulation_steps: int = 16  # effective batch = micro_batch_size * gradient_accumulation_steps
-    max_tokens: int = 200_000_000  # total assistant tokens seen in the run
-    learning_rate: float = 2e-4
-    min_lr: float = 2e-5  # 10% of peak
-    warmup_tokens: int = 100_000
+    gradient_accumulation_steps: int = 64  # effective batch = micro_batch_size * gradient_accumulation_steps
+    max_tokens: int = 250_000_000  # total assistant tokens seen in the run
+    learning_rate: float = 5e-5
+    min_lr: float = 5e-6  # 10% of peak
+    warmup_tokens: int = 10_000_000
     weight_decay: float = 0.01  # lighter than pretraining
     beta1: float = 0.9
     beta2: float = 0.95
@@ -57,10 +57,10 @@ class FinetuneConfig:
 
     # Logging & checkpointing
     log_interval: int = 10
-    val_interval: int = 200
-    val_batches: int = 50
+    val_interval: int = 100
+    val_batches: int = 500
     sample_interval: int = 200
-    checkpoint_interval_tokens: int = 2_000_000
+    checkpoint_interval_tokens: int = 10_000_000
     resume_lora_from: str | None = None
 
     # Wandb
